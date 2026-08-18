@@ -12,7 +12,8 @@ Michi는 일본인 사용자를 위한 서울 여행 일정 서비스입니다. 
 ## 빠른 시작
 
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
 npm --prefix backend install
 npm --prefix packages/log-friends-sdk install
 npm --prefix packages/log-friends-sdk run build

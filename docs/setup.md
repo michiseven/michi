@@ -10,22 +10,27 @@ Compose 파일은 PostGIS 3.5가 포함된 PostgreSQL 17을 실행합니다. Pos
 
 ## 1. 환경변수 설정
 
-프로젝트 루트에서 다음 명령을 실행합니다.
+Backend와 Frontend는 서로 다른 환경파일을 사용합니다. 프로젝트 루트에서 다음 명령을 실행합니다.
 
 ```bash
-cp .env.example .env
+cp backend/.env.example backend/.env
+cp frontend/.env.example frontend/.env.local
 ```
 
-기본값은 장소, 혼잡도, 선호도 분석에 Mock 동작을 사용하므로 외부 credential이 필요하지 않습니다. `.env.example`이나 소스 파일에 secret을 넣지 마세요.
+기본값은 장소, 혼잡도, 선호도 분석에 Mock 동작을 사용하므로 외부 credential이 필요하지 않습니다. `.env.example`이나 소스 파일에 secret을 넣지 마세요. Backend secret은 `backend/.env`에만, 브라우저에 공개되어도 되는 `NEXT_PUBLIC_*` 값은 `frontend/.env.local`에만 작성합니다.
 
-주요 값은 다음과 같습니다.
+Backend의 주요 값은 다음과 같습니다.
 
 ```env
-DATABASE_URL=postgresql://michi:michi@localhost:55432/michi
-DB_PORT=55432
+DATABASE_URL=
 PLACE_PROVIDER_MODE=mock
 CROWD_PROVIDER_MODE=mock
 LLM_PROVIDER_MODE=mock
+```
+
+Frontend의 주요 값은 다음과 같습니다.
+
+```env
 NEXT_PUBLIC_API_URL=http://localhost:4000/api
 NEXT_PUBLIC_DEMO_MODE=false
 NEXT_PUBLIC_LOG_FRIENDS_ENDPOINT=
