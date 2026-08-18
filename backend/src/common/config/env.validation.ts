@@ -16,6 +16,17 @@ function positiveInteger(value: unknown, fallback: number, name: string): number
   return parsed;
 }
 
+function apiPrefix(value: unknown): string {
+  if (value !== undefined && typeof value !== 'string') {
+    throw new Error('API_PREFIX must be a string');
+  }
+  const normalized = (value ?? 'api').trim().replace(/^\/+|\/+$/g, '');
+  if (!normalized || !/^[a-zA-Z0-9/_-]+$/.test(normalized)) {
+    throw new Error('API_PREFIX must be a non-empty URL path without query parameters');
+  }
+  return normalized;
+}
+
 export function validateEnvironment(input: Record<string, unknown>): Record<string, unknown> {
   const placeProviderMode = providerMode(input.PLACE_PROVIDER_MODE, 'PLACE_PROVIDER_MODE');
   const crowdProviderMode = providerMode(input.CROWD_PROVIDER_MODE, 'CROWD_PROVIDER_MODE');
@@ -37,6 +48,7 @@ export function validateEnvironment(input: Record<string, unknown>): Record<stri
     ...input,
     NODE_ENV: input.NODE_ENV ?? 'development',
     PORT: positiveInteger(input.PORT ?? input.BACKEND_PORT, 4000, 'PORT'),
+    API_PREFIX: apiPrefix(input.API_PREFIX),
     DATABASE_URL: input.DATABASE_URL ?? 'postgresql://michi:michi@localhost:55432/michi',
     PLACE_PROVIDER_MODE: placeProviderMode,
     CROWD_PROVIDER_MODE: crowdProviderMode,

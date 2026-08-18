@@ -17,6 +17,8 @@ Next.js 플래너(일본어 UI)
 
 Queue, message broker, Redis, 검색 cluster, microservice 분리는 사용하지 않는다. Provider cache는 프로세스 내부 TTL map이다.
 
+로컬에서는 frontend `/`, backend `/api`를 사용한다. 현재 NAS 운영 환경은 기존 Log Friends 경로와 분리하기 위해 같은 도메인의 `/michi`에 frontend를, `/michi/api`에 backend를 노출한다. `NEXT_PUBLIC_BASE_PATH`, `NEXT_PUBLIC_API_URL`, `API_PREFIX`로 이 차이를 구성하며 애플리케이션 코드의 API 계약은 바뀌지 않는다. 운영 데이터베이스는 Kubernetes 내부에 새로 띄우지 않고 기존 PostgreSQL 서버 안의 독립된 `michi` 데이터베이스를 사용한다.
+
 ## 런타임 흐름
 
 ```text

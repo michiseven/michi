@@ -27,3 +27,5 @@ npm --prefix backend run seed
 VS Code에서는 [`Michi.code-workspace`](Michi.code-workspace)를 열면 frontend, backend, design system, docs, packages가 각각 독립된 최상위 폴더로 표시됩니다. DB·마이그레이션·전체 검증 Task와 frontend/backend 단독 또는 동시 디버그 구성을 바로 사용할 수 있습니다.
 
 인증정보 없이 명시적인 Mock 모드로 시작할 수 있습니다. 전체 실행 절차는 [`docs/setup.md`](docs/setup.md), 실제 구현 상태는 [`docs/current-status.md`](docs/current-status.md)를 확인하세요.
+
+현재 NAS 배포는 `http://choi1994.tplinkdns.com/michi`에서 확인할 수 있습니다. 배포 구조와 재배포 절차는 [`docs/deployment.md`](docs/deployment.md)에 기록되어 있습니다.

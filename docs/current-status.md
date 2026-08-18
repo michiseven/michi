@@ -30,7 +30,7 @@
 - 생성 작업 전체를 묶는 persistence transaction과 과거 recommendation version
 - Log Friends 수집 endpoint, 서버 측 이벤트 검증·저장, 영속적 오프라인 브라우저 큐, `place_added` UI 동작
 - 영수증 upload/image lifecycle, live OCR/Vision, persistence/controller workflow, 사용자 확인 UI, 추천 수용률 평가
-- production authentication, authorization, retention/deletion, deployment
+- production authentication, authorization, retention/deletion
 
 ## 알려진 문제와 기술 부채
 
@@ -51,7 +51,7 @@
 | Log Friends SDK 테스트 | PASS — 파일 2개, 테스트 5개 |
 | Log Friends SDK 빌드 | PASS |
 | Backend lint | PASS |
-| 백엔드 테스트 | PASS — 모음 14개, 테스트 34개 |
+| 백엔드 테스트 | PASS — 모음 14개, 테스트 36개 |
 | 백엔드 빌드 | PASS |
 | 운영 의존성 감사 | PASS — 프런트엔드·백엔드·SDK에서 보고된 취약점 0건 |
 | Docker Compose 설정 | PASS — 호스트 `55432`에서 컨테이너 `5432`로 연결 |
@@ -59,6 +59,17 @@
 | 마이그레이션 | PASS — 초기 핵심 기능과 영수증 기반 마이그레이션 모두 적용, 대기 항목 없음 |
 | 기본 seed | PASS — 추가한 행이 없으며 Mock seed 사용 방법을 명시함 |
 | API smoke | PASS — health, preference parse, generation, retrieval, reorder/recalculation |
+| NAS Kubernetes 배포 | PASS — `/michi` frontend와 `/michi/api` backend가 각각 실행 중 |
+| 운영 데이터베이스 | PASS — 기존 PostgreSQL의 독립 `michi` DB에 두 migration 적용, PostGIS 연결 |
+| 기존 서비스 경로 회귀 | PASS — `/`, `/examples`, `/actuator`가 Michi 배포 후에도 기존 서비스로 응답 |
+
+## 현재 배포 상태
+
+- MicroK8s의 `michi` namespace에 frontend/backend Deployment와 ClusterIP Service를 각각 1개씩 운영합니다.
+- 기존 도메인의 `/michi`와 `/michi/api`만 Michi Ingress에 추가했습니다. Log Friends의 `/`, `/examples`, `/api`, `/ingest`, `/actuator` 규칙은 수정하지 않았습니다.
+- Backend 시작 전 init container가 migration을 실행하며 현재 두 migration 모두 적용된 상태입니다.
+- 운영 Provider는 현재 모두 명시적인 Mock 모드입니다. NAVER Maps client id도 설정하지 않아 지도는 좌표 기반 fallback을 표시합니다.
+- 배포 이미지 `michi-frontend:0.1.0`, `michi-backend:0.1.0`은 NAS의 로컬 MicroK8s containerd에 반입되어 있으며 외부 registry에는 게시하지 않았습니다.
 
 ## 다음 구현 우선순위
 

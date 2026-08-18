@@ -121,3 +121,13 @@ npm --prefix frontend run build
 - Log Friends 이벤트 batch: `NEXT_PUBLIC_LOG_FRIENDS_ENDPOINT`를 절대 경로의 ingest URL로 설정합니다. 값이 비어 있으면 이벤트는 크기가 제한된 메모리 queue에 남고 네트워크 요청은 발생하지 않습니다.
 
 모든 live adapter는 Mock 데이터로 조용히 대체하지 않고 오류를 명시적으로 반환합니다. 로컬 QA에서는 외부 credential을 사용하지 않았으므로 live provider 코드는 구현되어 있지만 실제 credential 검증은 완료되지 않았습니다.
+
+## NAS Kubernetes 배포
+
+운영 배포는 저장소 루트의 `backend/Dockerfile`, `frontend/Dockerfile`, `deploy/kubernetes.yaml`을 사용합니다. 현재 NAS 배포는 별도 PostgreSQL Pod를 만들지 않고 기존 PostgreSQL 서버의 독립된 `michi` 데이터베이스를 사용합니다. 접속 문자열은 저장소가 아니라 `michi-runtime` Kubernetes Secret에만 보관합니다.
+
+- Frontend: `http://choi1994.tplinkdns.com/michi`
+- Backend: `http://choi1994.tplinkdns.com/michi/api`
+- 상태 확인: `http://choi1994.tplinkdns.com/michi/api/health`
+
+상세 빌드, Secret 생성, 이미지 반입, 배포와 검증 절차는 [deployment.md](deployment.md)를 참고하세요.

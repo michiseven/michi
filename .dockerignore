@@ -1,0 +1,11 @@
+.git
+.github
+**/.DS_Store
+**/.env
+**/.env.*
+!.env.example
+**/node_modules
+**/.next
+**/dist
+**/coverage
+docs/.obsidian

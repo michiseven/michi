@@ -1,0 +1,161 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: michi-backend
+  namespace: michi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: michi-backend
+  template:
+    metadata:
+      labels:
+        app: michi-backend
+    spec:
+      initContainers:
+        - name: migrate
+          image: michi-backend:0.1.0
+          imagePullPolicy: Never
+          command: ["npm", "run", "migration:run:prod"]
+          envFrom:
+            - secretRef:
+                name: michi-runtime
+      containers:
+        - name: backend
+          image: michi-backend:0.1.0
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 4000
+          env:
+            - name: NODE_ENV
+              value: production
+            - name: PORT
+              value: "4000"
+            - name: API_PREFIX
+              value: michi/api
+            - name: CORS_ORIGIN
+              value: http://choi1994.tplinkdns.com
+            - name: LLM_PROVIDER_MODE
+              value: mock
+            - name: PLACE_PROVIDER_MODE
+              value: mock
+            - name: CROWD_PROVIDER_MODE
+              value: mock
+          envFrom:
+            - secretRef:
+                name: michi-runtime
+          readinessProbe:
+            httpGet:
+              path: /michi/api/health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /michi/api/health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 750m
+              memory: 768Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: michi-backend
+  namespace: michi
+spec:
+  selector:
+    app: michi-backend
+  ports:
+    - name: http
+      port: 4000
+      targetPort: http
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: michi-frontend
+  namespace: michi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: michi-frontend
+  template:
+    metadata:
+      labels:
+        app: michi-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: michi-frontend:0.1.0
+          imagePullPolicy: Never
+          ports:
+            - name: http
+              containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /michi
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /michi
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: michi-frontend
+  namespace: michi
+spec:
+  selector:
+    app: michi-frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: michi
+  namespace: michi
+spec:
+  ingressClassName: public
+  rules:
+    - host: choi1994.tplinkdns.com
+      http:
+        paths:
+          - path: /michi/api
+            pathType: Prefix
+            backend:
+              service:
+                name: michi-backend
+                port:
+                  number: 4000
+          - path: /michi
+            pathType: Prefix
+            backend:
+              service:
+                name: michi-frontend
+                port:
+                  number: 3000
