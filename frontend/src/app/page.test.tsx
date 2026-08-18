@@ -23,6 +23,15 @@ describe("trip planner flow", () => {
     Element.prototype.scrollIntoView = vi.fn();
   });
 
+  it("links to the NAVER Maps preview page", () => {
+    render(<HomePage />);
+
+    expect(screen.getByRole("link", { name: "地図の表示を確認" })).toHaveAttribute(
+      "href",
+      "/map-preview",
+    );
+  });
+
   it("sends explicit constraints and renders an explainable trip", async () => {
     vi.mocked(generateTrip).mockResolvedValue(testTrip);
     const user = userEvent.setup();

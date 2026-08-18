@@ -16,6 +16,8 @@
 
 `/trips/[id]`는 `GET /api/trips/:id`에서 저장된 여행을 불러온다. 삭제, 순서 변경, 재계산 Control은 문서화된 `PATCH /api/trips/:id/stops` Action Union을 호출한다. 시간은 브라우저에서 다시 계산하지 않는다.
 
+`/map-preview`는 추천 생성과 분리된 NAVER Maps 연결 확인 화면이다. 홈의 `地図の表示を確認` 버튼으로 이동하며, 서울의 명시적인 테스트 좌표와 Marker를 표시한다. 이 좌표는 추천 후보나 혼잡 데이터로 사용하지 않는다. Client ID가 없거나 인증·로딩에 실패하면 기존 지도 Fallback을 통해 원인을 구분할 수 있는 메시지를 표시한다.
+
 ## 모드와 설정
 
 - `NEXT_PUBLIC_API_URL`은 API Base URL이다(`http://localhost:4000/api`).

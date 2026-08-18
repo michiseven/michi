@@ -19,7 +19,9 @@ declare global {
   }
 }
 
-interface NaverMapProps { stops: TripStop[]; }
+type MapStop = Pick<TripStop, "id" | "placeName" | "latitude" | "longitude">;
+
+interface NaverMapProps { stops: MapStop[]; }
 
 const clientId = process.env.NEXT_PUBLIC_NAVER_MAP_CLIENT_ID;
 

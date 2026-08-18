@@ -87,6 +87,7 @@ h1 { margin: 0; max-width: 17ch; font-family: Georgia, "Yu Mincho", serif; font-
 h2 { margin: 0; font-size: clamp(23px, 4vw, 30px); line-height: 1.25; }
 h3 { margin: 0; font-size: 18px; line-height: 1.35; }
 .lede { max-width: 55ch; margin: 14px 0 0; color: var(--muted); font-size: 17px; }
+.page-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
 
 .status-banner { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 7px; background: var(--surface); font-size: 14px; }
 .status-banner strong { flex: none; }
@@ -161,6 +162,11 @@ h3 { margin: 0; font-size: 18px; line-height: 1.35; }
 .coordinate-item { display: grid; grid-template-columns: 28px 1fr; gap: 8px; align-items: start; }
 .marker-index { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: var(--primary); color: white; font-size: 12px; font-weight: 800; }
 .map-note { margin: 10px 0 0; color: var(--muted); font-size: 13px; }
+.map-preview-section { display: grid; gap: 18px; }
+.map-preview-heading { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
+.map-preview-heading h2 { display: flex; align-items: center; gap: 8px; }
+.map-preview-heading p, .map-preview-note { margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+.map-preview-note { margin-top: -4px; }
 
 .timeline { margin: 0; padding: 0; list-style: none; }
 .timeline-item { display: grid; grid-template-columns: 56px 20px minmax(0, 1fr); gap: 10px; }
@@ -219,6 +225,8 @@ h3 { margin: 0; font-size: 18px; line-height: 1.35; }
   .field-grid { grid-template-columns: 1fr; }
   .trip-header { display: block; }
   .trip-header .button { width: 100%; margin-top: 14px; }
+  .page-actions .button, .map-preview-heading .button { width: 100%; }
+  .map-preview-heading { display: grid; align-items: stretch; }
   .timeline-item { grid-template-columns: 48px 14px minmax(0, 1fr); gap: 7px; }
   .timeline-time { font-size: 12px; }
   .place-body { padding: 15px; }

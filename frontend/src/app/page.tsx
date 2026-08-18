@@ -1,7 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { EnvironmentBanner } from "@/components/environment-banner";
+import { MapPinIcon } from "@/components/icons";
 import { PlannerForm } from "@/components/planner-form";
 import { TripView } from "@/components/trip-view";
 import { generateTrip } from "@/lib/api";
@@ -49,6 +51,12 @@ export default function HomePage() {
           <p className="eyebrow">AI ITINERARY PLANNER</p>
           <h1>あなたらしいソウルの道を。</h1>
           <p className="lede">好みと時間を言葉で伝えると、実在する場所の候補から理由のわかる旅程を組み立てます。</p>
+          <div className="page-actions">
+            <Link className="button button-secondary" href="/map-preview">
+              <MapPinIcon aria-hidden="true" />
+              地図の表示を確認
+            </Link>
+          </div>
         </div>
         <EnvironmentBanner />
         {error && <div className="status-banner error" role="alert"><strong>作成失敗</strong><span>{error}</span></div>}
