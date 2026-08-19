@@ -24,178 +24,33 @@ Receipt 1--0..1 Visit *--1 Place
 
 ## ERD
 
-아래 ERD는 현재 적용된 TypeORM migration의 애플리케이션 테이블 12개와 실제 외래키를 기준으로 한다. `ExternalDataSnapshot`과 `JapaneseMarketMetric`은 출처 추적용 독립 테이블이며 다른 테이블에 대한 외래키가 없다.
+아래 ERD는 현재 적용된 TypeORM migration의 실제 외래키를 관계 중심으로 보여준다. 화면 크기를 줄이기 위해 Core와 Phase 2를 분리했으며, 전체 컬럼은 아래 entity 표에서 확인한다.
+
+### Core 여행·추천
 
 ```mermaid
 erDiagram
-    TRIPS {
-        uuid id PK
-        varchar status
-        date travel_date
-        time start_time
-        time end_time
-        integer budget_krw "nullable"
-        varchar start_area "nullable"
-        varchar provider_mode
-        integer total_estimated_cost "nullable"
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    TRIP_PREFERENCES {
-        uuid id PK
-        uuid trip_id FK "UNIQUE"
-        text original_text
-        varchar area "nullable"
-        time start_time
-        time end_time
-        integer budget_krw "nullable"
-        varchar companions "nullable"
-        varchar pace "nullable"
-        jsonb interests
-        jsonb preferences
-        jsonb avoid
-        varchar parser_mode
-        jsonb validated_json
-    }
-
-    PLACES {
-        uuid id PK
-        varchar source
-        varchar source_place_id "UNIQUE with source"
-        varchar name
-        varchar category "nullable"
-        varchar address "nullable"
-        varchar road_address "nullable"
-        geography location "nullable, Point 4326"
-        varchar district "nullable"
-        varchar raw_category "nullable"
-        jsonb raw_payload
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    RECOMMENDATION_RESULTS {
-        uuid id PK
-        uuid trip_id FK "UNIQUE"
-        varchar algorithm_version
-        jsonb final_weights
-        integer candidate_count
-        timestamptz generated_at
-    }
-
-    RECOMMENDATION_SCORES {
-        uuid id PK
-        uuid result_id FK "UNIQUE with place_id"
-        uuid place_id FK "UNIQUE with result_id"
-        double total
-        double preference
-        double crowd
-        double distance
-        double time
-        double budget
-        double diversity
-        double area
-    }
-
-    TRIP_STOPS {
-        uuid id PK
-        uuid trip_id FK "UNIQUE with order"
-        uuid place_id FK
-        integer order "UNIQUE with trip_id"
-        timestamptz arrival_at
-        timestamptz leave_at
-        integer estimated_stay_minutes
-        integer estimated_cost "nullable"
-        text reason
-        jsonb crowd_context "nullable"
-        jsonb score_breakdown
-    }
-
-    EXTERNAL_DATA_SNAPSHOTS {
-        uuid id PK
-        varchar provider
-        varchar data_kind
-        varchar scope
-        varchar scope_reference
-        timestamptz source_timestamp "nullable"
-        timestamptz collected_at
-        varchar source_url "nullable"
-        jsonb raw_payload
-    }
-
-    JAPANESE_MARKET_METRICS {
-        uuid id PK
-        varchar source
-        varchar source_url
-        date published_at "nullable"
-        timestamptz collected_at
-        varchar segment
-        varchar metric
-        double value
-        integer sample_size "nullable"
-        text notes "nullable"
-    }
-
-    USER_EVENTS {
-        uuid id PK
-        varchar event_name
-        varchar session_id
-        uuid trip_id FK "nullable"
-        uuid place_id FK "nullable"
-        timestamptz event_timestamp
-        jsonb context
-        timestamptz created_at
-    }
-
-    RECEIPTS {
-        uuid id PK
-        uuid trip_id FK "nullable"
-        varchar extractor
-        varchar extractor_mode
-        varchar merchant_name "nullable"
-        varchar merchant_address "nullable"
-        date purchase_date "nullable"
-        time purchase_time "nullable"
-        integer total_amount_krw "nullable"
-        char currency
-        jsonb extraction_warnings
-        timestamptz created_at
-        timestamptz updated_at
-    }
-
-    RECEIPT_ITEMS {
-        uuid id PK
-        uuid receipt_id FK "UNIQUE with line_number"
-        integer line_number "UNIQUE with receipt_id"
-        varchar item_name
-        integer quantity "nullable"
-        integer unit_price_krw "nullable"
-        integer amount_krw "nullable"
-    }
-
-    VISITS {
-        uuid id PK
-        uuid receipt_id FK "UNIQUE"
-        uuid place_id FK
-        varchar confirmation_source
-        timestamptz confirmed_at
-        timestamptz created_at
-    }
-
-    TRIPS ||--o| TRIP_PREFERENCES : "has preference"
-    TRIPS ||--o| RECOMMENDATION_RESULTS : "has current result"
-    TRIPS ||--o{ TRIP_STOPS : "contains"
-    PLACES ||--o{ TRIP_STOPS : "scheduled at"
-    RECOMMENDATION_RESULTS ||--o{ RECOMMENDATION_SCORES : "contains"
-    PLACES ||--o{ RECOMMENDATION_SCORES : "scored as"
-    TRIPS o|--o{ USER_EVENTS : "optionally referenced by"
-    PLACES o|--o{ USER_EVENTS : "optionally referenced by"
-    TRIPS o|--o{ RECEIPTS : "optionally groups"
-    RECEIPTS ||--o{ RECEIPT_ITEMS : "contains"
-    RECEIPTS ||--o| VISITS : "may confirm"
-    PLACES ||--o{ VISITS : "confirmed at"
+    TRIPS ||--o| TRIP_PREFERENCES : "선호"
+    TRIPS ||--o| RECOMMENDATION_RESULTS : "추천 결과"
+    TRIPS ||--o{ TRIP_STOPS : "일정"
+    PLACES ||--o{ TRIP_STOPS : "장소"
+    RECOMMENDATION_RESULTS ||--o{ RECOMMENDATION_SCORES : "점수"
+    PLACES ||--o{ RECOMMENDATION_SCORES : "후보"
 ```
+
+### 행동·영수증
+
+```mermaid
+erDiagram
+    TRIPS o|--o{ USER_EVENTS : "여행 이벤트"
+    PLACES o|--o{ USER_EVENTS : "장소 이벤트"
+    TRIPS o|--o{ RECEIPTS : "영수증"
+    RECEIPTS ||--o{ RECEIPT_ITEMS : "항목"
+    RECEIPTS ||--o| VISITS : "방문 확인"
+    PLACES ||--o{ VISITS : "방문 장소"
+```
+
+`external_data_snapshots`와 `japanese_market_metrics`는 출처 추적용 독립 테이블이라 ERD 연결선이 없다.
 
 현재 MVP model은 여행당 추천 결과 하나를 유지한다. 재계산은 여러 과거 결과 version을 보존하는 대신 현재 여행 경로를 갱신하거나 교체한다. Version별 결과 이력은 추후 audit 개선 사항이며 구현된 것으로 설명해서는 안 된다.
 
