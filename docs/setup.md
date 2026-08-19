@@ -79,6 +79,8 @@ docker compose down
 
 VS Code 사용자는 프로젝트 루트의 `Michi.code-workspace`를 열면 frontend, backend, design system, docs, packages가 각각 독립된 최상위 폴더로 표시됩니다. `Tasks: Run Task`에서 DB 시작, 마이그레이션, frontend/backend 개발 서버, 전체 검증 작업도 실행할 수 있습니다.
 
+같은 Desktop 구조에 Log Friends 저장소가 있으면 `Log Friends Console`과 `Log Friends Console Web`도 외부 workspace folder로 함께 표시됩니다. 두 저장소는 Michi 안으로 복사되지 않으며 각자의 Git 이력을 그대로 유지합니다.
+
 `Run and Debug`에서는 다음 구성을 사용할 수 있습니다.
 
 - `Michi: Backend debug`: DB 시작과 마이그레이션 후 NestJS를 watch/Node Inspector 모드로 실행합니다.

@@ -19,6 +19,14 @@
     {
       "name": "Packages",
       "path": "packages"
+    },
+    {
+      "name": "Log Friends Console",
+      "path": "../log-friends/log-friends-console"
+    },
+    {
+      "name": "Log Friends Console Web",
+      "path": "../log-friends/log-friends-console-web"
     }
   ],
   "settings": {
