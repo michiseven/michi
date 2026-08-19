@@ -8,21 +8,7 @@ Provider field가 없으면 nullable 상태를 유지한다. 현재 `Place` enti
 
 아래 내용은 현재 `backend/src/database/entities`에 존재하는 entity class를 설명한다. Database migration과 추가적인 database 수준 제약 조건도 이 내용과 일치하도록 유지해야 한다.
 
-## 관계
-
-```text
-Trip 1--1 TripPreference
-Trip 1--* TripStop *--1 Place
-Trip 1--1 RecommendationResult 1--* RecommendationScore *--1 Place
-
-ExternalDataSnapshot       범위 참조로 연결되는 출처 레코드
-JapaneseMarketMetric       집계된 Cold Start 데이터 출처
-UserEvent                  2단계 호환 익명 이벤트
-Trip 1--* Receipt 1--* ReceiptItem
-Receipt 1--0..1 Visit *--1 Place
-```
-
-## ERD
+## 관계 ERD
 
 아래 ERD는 현재 적용된 TypeORM migration의 실제 외래키를 관계 중심으로 보여준다. 화면 크기를 줄이기 위해 Core와 Phase 2를 분리했으며, 전체 컬럼은 아래 entity 표에서 확인한다.
 
